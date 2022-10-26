@@ -2,6 +2,8 @@ const collegeModel = require("../models/collegeModels");
 const internModel = require("../models/internModel");
 const mongoose = require("mongoose");
 
+////////////////////////////////////////// createIntern ////////////////////////////////////////////////////
+
 const createIntern = async function (req, res) {
   try {
     let reqData = req.body;
@@ -23,45 +25,27 @@ const createIntern = async function (req, res) {
   }
 };
 
+//////////////////////////////////////////////// getCollegeIntern /////////////////////////////////////////////////////////
+
 const getcollegeIntern = async function (req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
   try {
     const collegeName = req.query.collegeName;
-    if (!collegeName)
-      return res
-        .status(404)
-        .send({ status: false, msg: "Please send collegeName from queries" });
+    if (!collegeName) return res.status(404).send({ status: false, msg: "Please send collegeName from queries" });
 
-    let collegeDetails = await collegeModel.findOne({
-      name: collegeName,
-      isDeleted: false,
-    });
-    if (!collegeDetails) {
-      return res
-        .status(404)
-        .send({ status: "false", msg: "College not exist" });
-    }
+    let collegeDetails = await collegeModel.findOne({ name: collegeName, isDeleted: false });
+    if (!collegeDetails) { return res.status(404).send({ status: "false", msg: "College not exist" })}
 
     let objectOfCollegeDetails = collegeDetails.toObject();
 
     let { name, fullName, logoLink } = { ...objectOfCollegeDetails };
 
-    let internDetails = await internModel
-      .find({ collegeId: collegeDetails._id, isDeleted: false })
-      .select({ name: 1, email: 1, mobile: 1 });
-    if (!internDetails[0]) {
-      return res
-        .status(404)
-        .send({ status: "false", msg: "No intern applied for this college" });
-    }
+    let internDetails = await internModel.find({ collegeId: collegeDetails._id, isDeleted: false }).select({ name: 1, email: 1, mobile: 1 });
+    if (!internDetails[0]) { return res.status(404).send({ status: "false", msg: "No intern applied for this college" })}
 
-    let internsOf_a_College = {
-      name,
-      fullName,
-      logoLink,
-      intern: internDetails,
-    };
+    let internsOf_a_College = { name, fullName, logoLink, interns: internDetails };
 
-    return res.status(200).send({ data: internsOf_a_College });
+    return res.status(200).send({ status: true, data: internsOf_a_College });
   } catch (error) {
     return res.status(500).send({ msg: error.message });
   }

@@ -1,6 +1,7 @@
 const collegeModel = require("../models/collegeModels")
 
 
+
 const createCollege = async function(req,res){
     try {
         let reqData = req.body
@@ -15,4 +16,4 @@ const createCollege = async function(req,res){
 
 }
 
-module.exports = {createCollege}
+module.exports = { createCollege }

@@ -5,18 +5,18 @@ const internModel = require("../models/internModel");
 
 const isValidName = function (body) {
   const nameRegex = /^[a-zA-Z_ ]*$/;
-
   return nameRegex.test(body);
 };
+
 const isValidLogoLink = function (body) {
   const nameRegex = /^[a-zA-Z0-9!@#$&()`.:?=_;~(){}%^*+,/"-]*$/;
-
   return nameRegex.test(body);
 };
 
 const isValidEmail = function (email) {
   return /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email);
 };
+
 const isValidMobileNo = function (mobile) {
   return /^[6-9]\d{9}$/.test(mobile);
 };
@@ -83,14 +83,11 @@ const collegeValidation = async function (req, res, next) {
 ////////////////////////////////////////////////////    Intern Validation      ////////////////////////////////////////////////////////////////////////
 
 const internValidation = async function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
   let internDetails = req.body;
-  let { name, mobile, email, collegeName, ...rest } = { ...internDetails };
+  let { name, mobile, email, collegeName } = { ...internDetails };
 
-  if (Object.keys(rest) != 0)
-    return res.status(404).send({
-      status: false,
-      msg: "Please provide required details only => name, mobile, email & collegeName",
-    });
+
   if (Object.keys(internDetails) == 0)
     return res
       .status(404)
